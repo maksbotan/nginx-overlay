@@ -1,6 +1,6 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
+# $Header: /var/cvsroot/gentoo-x86/www-servers/nginx/nginx-1.5.10.ebuild,v 1.1 2014/02/10 03:12:24 zx2c4 Exp $
 
 EAPI="5"
 
@@ -24,7 +24,7 @@ DEVEL_KIT_MODULE_URI="https://github.com/simpl/ngx_devel_kit/archive/v${DEVEL_KI
 DEVEL_KIT_MODULE_WD="${WORKDIR}/ngx_devel_kit-${DEVEL_KIT_MODULE_PV}"
 
 # http_uploadprogress (https://github.com/masterzen/nginx-upload-progress-module, BSD-2 license)
-HTTP_UPLOAD_PROGRESS_MODULE_PV="0.9.0"
+HTTP_UPLOAD_PROGRESS_MODULE_PV="0.9.1"
 HTTP_UPLOAD_PROGRESS_MODULE_P="ngx_http_upload_progress-${HTTP_UPLOAD_PROGRESS_MODULE_PV}-r1"
 HTTP_UPLOAD_PROGRESS_MODULE_URI="https://github.com/masterzen/nginx-upload-progress-module/archive/v${HTTP_UPLOAD_PROGRESS_MODULE_PV}.tar.gz"
 HTTP_UPLOAD_PROGRESS_MODULE_WD="${WORKDIR}/nginx-upload-progress-module-${HTTP_UPLOAD_PROGRESS_MODULE_PV}"
@@ -54,7 +54,7 @@ HTTP_FANCYINDEX_MODULE_URI="https://github.com/aperezdc/ngx-fancyindex/archive/v
 HTTP_FANCYINDEX_MODULE_WD="${WORKDIR}/ngx-fancyindex-${HTTP_FANCYINDEX_MODULE_PV}"
 
 # http_lua (https://github.com/chaoslawful/lua-nginx-module, BSD license)
-HTTP_LUA_MODULE_PV="0.9.7"
+HTTP_LUA_MODULE_PV="0.9.8"
 HTTP_LUA_MODULE_P="ngx_http_lua-${HTTP_LUA_MODULE_PV}"
 HTTP_LUA_MODULE_URI="https://github.com/chaoslawful/lua-nginx-module/archive/v${HTTP_LUA_MODULE_PV}.tar.gz"
 HTTP_LUA_MODULE_WD="${WORKDIR}/lua-nginx-module-${HTTP_LUA_MODULE_PV}"
@@ -96,14 +96,14 @@ HTTP_DAV_EXT_MODULE_URI="http://github.com/arut/nginx-dav-ext-module/archive/v${
 HTTP_DAV_EXT_MODULE_WD="${WORKDIR}/nginx-dav-ext-module-${HTTP_DAV_EXT_MODULE_PV}"
 
 # echo-nginx-module (https://github.com/agentzh/echo-nginx-module, BSD license)
-HTTP_ECHO_MODULE_PV="0.52"
+HTTP_ECHO_MODULE_PV="0.53"
 HTTP_ECHO_MODULE_P="ngx_http_echo-${HTTP_ECHO_MODULE_PV}"
 HTTP_ECHO_MODULE_URI="https://github.com/agentzh/echo-nginx-module/archive/v${HTTP_ECHO_MODULE_PV}.tar.gz"
 HTTP_ECHO_MODULE_WD="${WORKDIR}/echo-nginx-module-${HTTP_ECHO_MODULE_PV}"
 
 # mod_security for nginx (https://modsecurity.org/, Apache-2.0)
 # keep the MODULE_P here consistent with upstream to avoid tarball duplication
-HTTP_SECURITY_MODULE_PV="2.7.7"
+HTTP_SECURITY_MODULE_PV="2.8.0"
 HTTP_SECURITY_MODULE_P="modsecurity-apache_${HTTP_SECURITY_MODULE_PV}"
 HTTP_SECURITY_MODULE_URI="https://www.modsecurity.org/tarball/${HTTP_SECURITY_MODULE_PV}/${HTTP_SECURITY_MODULE_P}.tar.gz"
 HTTP_SECURITY_MODULE_WD="${WORKDIR}/${HTTP_SECURITY_MODULE_P}"
@@ -115,10 +115,10 @@ HTTP_PUSH_STREAM_MODULE_URI="https://github.com/wandenberg/nginx-push-stream-mod
 HTTP_PUSH_STREAM_MODULE_WD="${WORKDIR}/nginx-push-stream-module-${HTTP_PUSH_STREAM_MODULE_PV}"
 
 # sticky-module (https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng, BSD-2)
-HTTP_STICKY_MODULE_PV="1.2.3"
+HTTP_STICKY_MODULE_PV="1.2.4"
 HTTP_STICKY_MODULE_P="nginx_http_sticky_module_ng-${HTTP_STICKY_MODULE_PV}"
-HTTP_STICKY_MODULE_URI="https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/v${HTTP_STICKY_MODULE_PV}.tar.bz2"
-HTTP_STICKY_MODULE_WD="${WORKDIR}/nginx-goodies-nginx-sticky-module-ng-45973be2b64e"
+HTTP_STICKY_MODULE_URI="https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/${HTTP_STICKY_MODULE_PV}.tar.bz2"
+HTTP_STICKY_MODULE_WD="${WORKDIR}/nginx-goodies-nginx-sticky-module-ng-c825ea7c5c91"
 
 # ajp-module (https://github.com/yaoweibin/nginx_ajp_module, BSD-2)
 HTTP_AJP_MODULE_PV="0.3.0"
@@ -223,8 +223,6 @@ CDEPEND="
 	nginx_modules_http_security? ( >=dev-libs/libxml2-2.7.8 dev-libs/apr-util www-servers/apache )"
 RDEPEND="${CDEPEND}"
 DEPEND="${CDEPEND}
-	nginx_modules_http_security? (
-		nginx_modules_http_lua? ( virtual/pkgconfig ) )
 	arm? ( dev-libs/libatomic_ops )
 	libatomic? ( dev-libs/libatomic_ops )"
 PDEPEND="vim-syntax? ( app-vim/nginx-syntax )"
@@ -269,7 +267,7 @@ src_prepare() {
 	epatch "${FILESDIR}/${PN}-1.4.1-fix-perl-install-path.patch"
 
 	if use nginx_modules_http_upstream_check; then
-		epatch "${FILESDIR}"/upstream-check-1.5.13.patch
+		epatch "${FILESDIR}"/check_1.5.12+.patch
 	fi
 
 	if use nginx_modules_http_lua; then
