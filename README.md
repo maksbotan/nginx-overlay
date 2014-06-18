@@ -3,7 +3,7 @@
 This repository contains additional versions of gentoo's nginx ebuilds.
 
 The main purpose is to keep older versions around for those that prefer to use
-releases from the nginx 'stable' branch, although [upstream recommendation](1)
+releases from the nginx 'stable' branch, although [upstream recommendation][1]
 is to stick with mainline.
 
 The repository will additionally contain newer and/or experimental versions
