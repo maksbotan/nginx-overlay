@@ -127,7 +127,7 @@ HTTP_PUSH_STREAM_MODULE_P="ngx_http_push_stream-${HTTP_PUSH_STREAM_MODULE_PV}"
 HTTP_PUSH_STREAM_MODULE_URI="https://github.com/wandenberg/nginx-push-stream-module/archive/${HTTP_PUSH_STREAM_MODULE_PV}.tar.gz"
 HTTP_PUSH_STREAM_MODULE_WD="${WORKDIR}/nginx-push-stream-module-${HTTP_PUSH_STREAM_MODULE_PV}"
 
-inherit eutils ssl-cert toolchain-funcs perl-module flag-o-matic user systemd versionator
+inherit eutils ssl-cert toolchain-funcs perl-module flag-o-matic user systemd versionator multilib
 
 DESCRIPTION="Robust, small and high performance http and reverse proxy server"
 HOMEPAGE="http://nginx.org"
@@ -468,7 +468,7 @@ src_configure() {
 		--pid-path="${EPREFIX}"/run/${PN}.pid \
 		--lock-path="${EPREFIX}"/run/lock/${PN}.lock \
 		--with-cc-opt="-I${EROOT}usr/include" \
-		--with-ld-opt="-L${EROOT}usr/lib" \
+		--with-ld-opt="-L${EROOT}usr/$(get_libdir)" \
 		--http-log-path="${EPREFIX}"/var/log/${PN}/access_log \
 		--http-client-body-temp-path="${EPREFIX}/${NGINX_HOME_TMP}"/client \
 		--http-proxy-temp-path="${EPREFIX}/${NGINX_HOME_TMP}"/proxy \
