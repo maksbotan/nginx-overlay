@@ -66,10 +66,10 @@ HTTP_AUTH_PAM_MODULE_URI="http://web.iti.upv.es/~sto/nginx/ngx_http_auth_pam_mod
 HTTP_AUTH_PAM_MODULE_WD="${WORKDIR}/ngx_http_auth_pam_module-${HTTP_AUTH_PAM_MODULE_PV}"
 
 # http_upstream_check (https://github.com/yaoweibin/nginx_upstream_check_module, BSD license)
-# HTTP_UPSTREAM_CHECK_MODULE_PV="0.1.9"
-# HTTP_UPSTREAM_CHECK_MODULE_P="ngx_http_upstream_check-${HTTP_UPSTREAM_CHECK_MODULE_PV}"
-# HTTP_UPSTREAM_CHECK_MODULE_URI="https://github.com/yaoweibin/nginx_upstream_check_module/archive/v${HTTP_UPSTREAM_CHECK_MODULE_PV}.tar.gz"
-# HTTP_UPSTREAM_CHECK_MODULE_WD="${WORKDIR}/nginx_upstream_check_module-${HTTP_UPSTREAM_CHECK_MODULE_PV}"
+HTTP_UPSTREAM_CHECK_MODULE_PV="0.1.9"
+HTTP_UPSTREAM_CHECK_MODULE_P="ngx_http_upstream_check-${HTTP_UPSTREAM_CHECK_MODULE_PV}"
+HTTP_UPSTREAM_CHECK_MODULE_URI="https://github.com/yaoweibin/nginx_upstream_check_module/archive/v${HTTP_UPSTREAM_CHECK_MODULE_PV}.tar.gz"
+HTTP_UPSTREAM_CHECK_MODULE_WD="${WORKDIR}/nginx_upstream_check_module-${HTTP_UPSTREAM_CHECK_MODULE_PV}"
 
 # http_metrics (https://github.com/zenops/ngx_metrics, BSD license)
 HTTP_METRICS_MODULE_PV="0.1.1"
@@ -139,6 +139,7 @@ SRC_URI="http://nginx.org/download/${P}.tar.gz
 	nginx_modules_http_fancyindex? ( ${HTTP_FANCYINDEX_MODULE_URI} -> ${HTTP_FANCYINDEX_MODULE_P}.tar.gz )
 	nginx_modules_http_lua? ( ${HTTP_LUA_MODULE_URI} -> ${HTTP_LUA_MODULE_P}.tar.gz )
 	nginx_modules_http_auth_pam? ( ${HTTP_AUTH_PAM_MODULE_URI} -> ${HTTP_AUTH_PAM_MODULE_P}.tar.gz )
+	nginx_modules_http_upstream_check? ( ${HTTP_UPSTREAM_CHECK_MODULE_URI} -> ${HTTP_UPSTREAM_CHECK_MODULE_P}.tar.gz )
 	nginx_modules_http_metrics? ( ${HTTP_METRICS_MODULE_URI} -> ${HTTP_METRICS_MODULE_P}.tar.gz )
 	nginx_modules_http_naxsi? ( ${HTTP_NAXSI_MODULE_URI} -> ${HTTP_NAXSI_MODULE_P}.tar.gz )
 	rtmp? ( ${RTMP_MODULE_URI} -> ${RTMP_MODULE_P}.tar.gz )
@@ -170,6 +171,7 @@ NGINX_MODULES_3RD="
 	http_fancyindex
 	http_lua
 	http_auth_pam
+	http_upstream_check
 	http_metrics
 	http_naxsi
 	http_dav_ext
@@ -264,9 +266,9 @@ pkg_setup() {
 src_prepare() {
 	epatch "${FILESDIR}/${PN}-1.4.1-fix-perl-install-path.patch"
 
-#	if use nginx_modules_http_upstream_check; then
-#		epatch "${FILESDIR}"/check_1.5.12+.patch
-#	fi
+	if use nginx_modules_http_upstream_check; then
+		epatch "${FILESDIR}"/check_1.7.2+.patch
+	fi
 
 	if use nginx_modules_http_lua; then
 		sed -i -e 's/-llua5.1/-llua/' "${HTTP_LUA_MODULE_WD}/config"
@@ -367,10 +369,10 @@ src_configure() {
 		myconf+=" --add-module=${HTTP_AUTH_PAM_MODULE_WD}"
 	fi
 
-#	if use nginx_modules_http_upstream_check; then
-#		http_enabled=1
-#		myconf+=" --add-module=${HTTP_UPSTREAM_CHECK_MODULE_WD}"
-#	fi
+	if use nginx_modules_http_upstream_check; then
+		http_enabled=1
+		myconf+=" --add-module=${HTTP_UPSTREAM_CHECK_MODULE_WD}"
+	fi
 
 	if use nginx_modules_http_metrics; then
 		http_enabled=1
@@ -548,10 +550,10 @@ src_install() {
 		dodoc "${HTTP_AUTH_PAM_MODULE_WD}"/{README,ChangeLog}
 	fi
 
-#	if use nginx_modules_http_upstream_check; then
-#		docinto ${HTTP_UPSTREAM_CHECK_MODULE_P}
-#		dodoc "${HTTP_UPSTREAM_CHECK_MODULE_WD}"/{README,CHANGES}
-#	fi
+	if use nginx_modules_http_upstream_check; then
+		docinto ${HTTP_UPSTREAM_CHECK_MODULE_P}
+		dodoc "${HTTP_UPSTREAM_CHECK_MODULE_WD}"/{README,CHANGES}
+	fi
 
 # README.md is still empty
 #	if use nginx_modules_http_metrics; then
