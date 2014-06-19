@@ -521,7 +521,7 @@ src_install() {
 
 	# logrotate
 	insinto /etc/logrotate.d
-	newins "${FILESDIR}"/nginx.logrotate nginx
+	newins "${FILESDIR}"/nginx.logrotate-r1 nginx
 
 	if use nginx_modules_http_perl; then
 		cd "${S}"/objs/src/http/modules/perl/
