@@ -18,7 +18,19 @@ that this repository does not follow gentoo's ebuild versioning conventions
 (`-r1` or similar bumps). Keep track of the repository changelog and rebuild
 if relevant.
 
-### Workflow
+### Usage
+
+Gentoo has a handy tool for managing third party overlays called [layman][3].
+After installing it, sync and add the nginx-overlay:
+
+```bash
+$ layman -S
+$ layman -a nginx-overlay
+```
+
+Keyword as appropriate and use emerge like you normally would do.
+
+### Branch workflow
 
 The **master** branch is always considered being production ready, which means
 that all development should be made in branches. All commits and merges to
@@ -34,3 +46,4 @@ in the [Gentoo Bugzilla][2].
 
 [1]: http://nginx.com/blog/nginx-1-6-1-7-released/
 [2]: http://bugs.gentoo.org
+[3]: http://layman.sourceforge.net
