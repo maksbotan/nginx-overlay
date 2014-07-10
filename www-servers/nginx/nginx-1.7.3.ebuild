@@ -54,7 +54,7 @@ HTTP_FANCYINDEX_MODULE_URI="https://github.com/aperezdc/ngx-fancyindex/archive/v
 HTTP_FANCYINDEX_MODULE_WD="${WORKDIR}/ngx-fancyindex-${HTTP_FANCYINDEX_MODULE_PV}"
 
 # http_lua (https://github.com/chaoslawful/lua-nginx-module, BSD license)
-HTTP_LUA_MODULE_PV="0.9.8"
+HTTP_LUA_MODULE_PV="0.9.10"
 HTTP_LUA_MODULE_P="ngx_http_lua-${HTTP_LUA_MODULE_PV}"
 HTTP_LUA_MODULE_URI="https://github.com/chaoslawful/lua-nginx-module/archive/v${HTTP_LUA_MODULE_PV}.tar.gz"
 HTTP_LUA_MODULE_WD="${WORKDIR}/lua-nginx-module-${HTTP_LUA_MODULE_PV}"
@@ -96,7 +96,7 @@ HTTP_DAV_EXT_MODULE_URI="http://github.com/arut/nginx-dav-ext-module/archive/v${
 HTTP_DAV_EXT_MODULE_WD="${WORKDIR}/nginx-dav-ext-module-${HTTP_DAV_EXT_MODULE_PV}"
 
 # echo-nginx-module (https://github.com/agentzh/echo-nginx-module, BSD license)
-HTTP_ECHO_MODULE_PV="0.53"
+HTTP_ECHO_MODULE_PV="0.54"
 HTTP_ECHO_MODULE_P="ngx_http_echo-${HTTP_ECHO_MODULE_PV}"
 HTTP_ECHO_MODULE_URI="https://github.com/agentzh/echo-nginx-module/archive/v${HTTP_ECHO_MODULE_PV}.tar.gz"
 HTTP_ECHO_MODULE_WD="${WORKDIR}/echo-nginx-module-${HTTP_ECHO_MODULE_PV}"
@@ -115,10 +115,10 @@ HTTP_PUSH_STREAM_MODULE_URI="https://github.com/wandenberg/nginx-push-stream-mod
 HTTP_PUSH_STREAM_MODULE_WD="${WORKDIR}/nginx-push-stream-module-${HTTP_PUSH_STREAM_MODULE_PV}"
 
 # sticky-module (https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng, BSD-2)
-HTTP_STICKY_MODULE_PV="1.2.4"
+HTTP_STICKY_MODULE_PV="1.2.5"
 HTTP_STICKY_MODULE_P="nginx_http_sticky_module_ng-${HTTP_STICKY_MODULE_PV}"
 HTTP_STICKY_MODULE_URI="https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng/get/${HTTP_STICKY_MODULE_PV}.tar.bz2"
-HTTP_STICKY_MODULE_WD="${WORKDIR}/nginx-goodies-nginx-sticky-module-ng-c825ea7c5c91"
+HTTP_STICKY_MODULE_WD="${WORKDIR}/nginx-goodies-nginx-sticky-module-ng-bd312d586752"
 
 # ajp-module (https://github.com/yaoweibin/nginx_ajp_module, BSD-2)
 HTTP_AJP_MODULE_PV="0.3.0"
@@ -181,8 +181,8 @@ NGINX_MODULES_3RD="
 	http_sticky
 	http_ajp"
 
-IUSE="aio debug +http +http-cache ipv6 libatomic +pcre pcre-jit rtmp selinux ssl
-userland_GNU vim-syntax"
+IUSE="aio debug +http +http-cache ipv6 libatomic luajit +pcre pcre-jit rtmp
+selinux ssl userland_GNU vim-syntax"
 
 for mod in $NGINX_MODULES_STD; do
 	IUSE="${IUSE} +nginx_modules_http_${mod}"
@@ -216,7 +216,7 @@ CDEPEND="
 	nginx_modules_http_secure_link? ( userland_GNU? ( dev-libs/openssl ) )
 	nginx_modules_http_spdy? ( >=dev-libs/openssl-1.0.1c )
 	nginx_modules_http_xslt? ( dev-libs/libxml2 dev-libs/libxslt )
-	nginx_modules_http_lua? ( || ( dev-lang/lua dev-lang/luajit ) )
+	nginx_modules_http_lua? ( !luajit? ( dev-lang/lua ) luajit? ( dev-lang/luajit ) )
 	nginx_modules_http_auth_pam? ( virtual/pam )
 	nginx_modules_http_metrics? ( dev-libs/yajl )
 	nginx_modules_http_dav_ext? ( dev-libs/expat )
@@ -295,6 +295,11 @@ src_configure() {
 	# mod_security needs to generate nginx/modsecurity/config before including it
 	if use nginx_modules_http_security; then
 		cd "${HTTP_SECURITY_MODULE_WD}"
+		if use luajit ; then
+			sed -i \
+				-e 's|^\(LUA_PKGNAMES\)=.*|\1="luajit"|' \
+				configure || die
+		fi
 		./configure \
 			--enable-standalone-module \
 			$(use_enable pcre-jit) \
@@ -360,6 +365,13 @@ src_configure() {
 
 	if use nginx_modules_http_lua; then
 		http_enabled=1
+		if use luajit; then
+			export LUAJIT_LIB=$(pkg-config --variable libdir luajit)
+			export LUAJIT_INC=$(pkg-config --variable includedir luajit)
+		else
+			export LUA_LIB=$(pkg-config --variable libdir lua)
+			export LUA_INC=$(pkg-config --variable includedir lua)
+		fi
 		myconf+=" --add-module=${DEVEL_KIT_MODULE_WD}"
 		myconf+=" --add-module=${HTTP_LUA_MODULE_WD}"
 	fi
