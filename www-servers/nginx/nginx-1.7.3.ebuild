@@ -181,8 +181,8 @@ NGINX_MODULES_3RD="
 	http_sticky
 	http_ajp"
 
-IUSE="aio debug +http +http-cache ipv6 libatomic +pcre pcre-jit rtmp selinux ssl
-userland_GNU vim-syntax"
+IUSE="aio debug +http +http-cache ipv6 libatomic luajit +pcre pcre-jit rtmp
+selinux ssl userland_GNU vim-syntax"
 
 for mod in $NGINX_MODULES_STD; do
 	IUSE="${IUSE} +nginx_modules_http_${mod}"
@@ -216,7 +216,7 @@ CDEPEND="
 	nginx_modules_http_secure_link? ( userland_GNU? ( dev-libs/openssl ) )
 	nginx_modules_http_spdy? ( >=dev-libs/openssl-1.0.1c )
 	nginx_modules_http_xslt? ( dev-libs/libxml2 dev-libs/libxslt )
-	nginx_modules_http_lua? ( || ( dev-lang/lua dev-lang/luajit ) )
+	nginx_modules_http_lua? ( !luajit? ( dev-lang/lua ) luajit? ( dev-lang/luajit ) )
 	nginx_modules_http_auth_pam? ( virtual/pam )
 	nginx_modules_http_metrics? ( dev-libs/yajl )
 	nginx_modules_http_dav_ext? ( dev-libs/expat )
@@ -295,6 +295,11 @@ src_configure() {
 	# mod_security needs to generate nginx/modsecurity/config before including it
 	if use nginx_modules_http_security; then
 		cd "${HTTP_SECURITY_MODULE_WD}"
+		if use luajit ; then
+			sed -i \
+				-e 's|^\(LUA_PKGNAMES\)=.*|\1="luajit"|' \
+				configure || die
+		fi
 		./configure \
 			--enable-standalone-module \
 			$(use_enable pcre-jit) \
@@ -360,6 +365,13 @@ src_configure() {
 
 	if use nginx_modules_http_lua; then
 		http_enabled=1
+		if use luajit; then
+			export LUAJIT_LIB=$(pkg-config --variable libdir luajit)
+			export LUAJIT_INC=$(pkg-config --variable includedir luajit)
+		else
+			export LUA_LIB=$(pkg-config --variable libdir lua)
+			export LUA_INC=$(pkg-config --variable includedir lua)
+		fi
 		myconf+=" --add-module=${DEVEL_KIT_MODULE_WD}"
 		myconf+=" --add-module=${HTTP_LUA_MODULE_WD}"
 	fi
