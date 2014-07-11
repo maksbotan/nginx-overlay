@@ -484,6 +484,11 @@ src_configure() {
 		--http-scgi-temp-path="${EPREFIX}/${NGINX_HOME_TMP}"/scgi \
 		--http-uwsgi-temp-path="${EPREFIX}/${NGINX_HOME_TMP}"/uwsgi \
 		${myconf} || die "configure failed"
+
+	# A purely cosmetic change that makes nginx -V more readable. This can be
+	# good if people outside the gentoo community would troubleshoot and
+	# question the users setup.
+	sed -i -e "s|${WORKDIR}|external_module|g" objs/ngx_auto_config.h || die
 }
 
 src_compile() {
