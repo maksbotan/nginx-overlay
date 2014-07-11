@@ -11,10 +11,11 @@ requires further testing before landing in the gentoo portage tree.
 
 Older ebuilds will use unstable (~) keywording while experimental ebuilds
 lacks any keywording. Please adjust your portage configuration
-accordingly.
+accordingly. Only bugfixes will be backported. If you're interested in newer
+3rd party modules, consider moving to the latest available version.
 
 If you choose to use this overlay as your preferred provider, please take note
-that this repository does not follow gentoo's ebuild versioning conventions
+that this repository might not follow gentoo's ebuild versioning conventions
 (`-r1` or similar bumps). Keep track of the repository changelog and rebuild
 if relevant.
 
