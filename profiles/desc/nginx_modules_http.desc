@@ -38,6 +38,7 @@ lua - Embed the power of Lua into nginx
 map - This module allows you to classify, or map a set of values into a different set of values and store the result in a variable.
 memcached - You can use this module to perform simple caching.
 metrics - Module to export various metrics in easy-parseable JSON.
+mogilefs - Enable support for MogileFS.
 mp4 - This module adds pseudo-streaming
 naxsi - An open source, high performance, low rules maintenance, Web Application Firewall module for Nginx.
 passenger - Passenger makes deployment of Ruby web applications a breeze.
