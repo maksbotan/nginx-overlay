@@ -286,6 +286,12 @@ src_prepare() {
 		cd "${S}"
 	fi
 
+	if use rtmp ; then
+		cd "${RTMP_MODULE_WD}"
+		epatch "${FILESDIR}/rtmp-${P}.patch"
+		cd "${S}"
+	fi
+
 	find auto/ -type f -print0 | xargs -0 sed -i 's:\&\& make:\&\& \\$(MAKE):' || die
 	# We have config protection, don't rename etc files
 	sed -i 's:.default::' auto/install || die
