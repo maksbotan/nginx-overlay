@@ -211,7 +211,6 @@ done
 CDEPEND="
 	pcre? ( >=dev-libs/libpcre-4.2 )
 	pcre-jit? ( >=dev-libs/libpcre-8.20[jit] )
-	selinux? ( sec-policy/selinux-nginx )
 	ssl? ( dev-libs/openssl )
 	http-cache? ( userland_GNU? ( dev-libs/openssl ) )
 	nginx_modules_http_geoip? ( dev-libs/geoip )
@@ -229,7 +228,9 @@ CDEPEND="
 	nginx_modules_http_metrics? ( dev-libs/yajl )
 	nginx_modules_http_dav_ext? ( dev-libs/expat )
 	nginx_modules_http_security? ( >=dev-libs/libxml2-2.7.8 dev-libs/apr-util www-servers/apache )"
-RDEPEND="${CDEPEND}"
+RDEPEND="${CDEPEND}
+	selinux? ( sec-policy/selinux-nginx )
+"
 DEPEND="${CDEPEND}
 	arm? ( dev-libs/libatomic_ops )
 	libatomic? ( dev-libs/libatomic_ops )"
